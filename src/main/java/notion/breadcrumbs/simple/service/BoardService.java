@@ -3,6 +3,7 @@ package notion.breadcrumbs.simple.service;
 import lombok.RequiredArgsConstructor;
 import notion.breadcrumbs.simple.domain.*;
 import notion.breadcrumbs.simple.repsoitory.BoardRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
 
+    @Transactional(readOnly = true)
     public BoardPage findPageInfoById(Long id) {
         Board board = boardRepository.findById(id);
         checkNull(id, board);
