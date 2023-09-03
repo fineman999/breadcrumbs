@@ -2,6 +2,7 @@ package notion.breadcrumbs.simple.repsoitory;
 
 import lombok.RequiredArgsConstructor;
 import notion.breadcrumbs.simple.domain.Board;
+import notion.breadcrumbs.simple.domain.BoardSummary;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
 @SpringBootTest
@@ -78,5 +81,20 @@ class BoardRepositoryTest {
         Board board = boardRepository.findById(10L);
 
         assertThat(board.getId()).isEqualTo(10L);
+    }
+
+    @Sql("/insertBoardTest.sql")
+    @DisplayName("subPages 게시글 조회")
+    @Test
+    void findSubPagesById() {
+        List<BoardSummary> subPages = boardRepository.findSubPagesById(10L);
+
+        assertAll(
+                () -> assertThat(subPages.size()).isEqualTo(2),
+                () -> assertThat(subPages.get(0).id()).isEqualTo(20L),
+                () -> assertThat(subPages.get(0).title()).isEqualTo("title2"),
+                () -> assertThat(subPages.get(1).id()).isEqualTo(30L),
+                () -> assertThat(subPages.get(1).title()).isEqualTo("title3")
+        );
     }
 }
