@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -68,5 +69,14 @@ class BoardRepositoryTest {
                 .build();
         int saved = boardRepository.save(board);
         assertThat(saved).isEqualTo(1);
+    }
+
+    @Sql("/insertBoardTest.sql")
+    @DisplayName("기본 게시글 조회")
+    @Test
+    void findById() {
+        Board board = boardRepository.findById(10L);
+
+        assertThat(board.getId()).isEqualTo(10L);
     }
 }
