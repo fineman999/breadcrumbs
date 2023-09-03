@@ -3,6 +3,7 @@ package notion.breadcrumbs.simple.repsoitory;
 import lombok.RequiredArgsConstructor;
 import notion.breadcrumbs.simple.domain.Board;
 import notion.breadcrumbs.simple.domain.BoardSummary;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +96,21 @@ class BoardRepositoryTest {
                 () -> assertThat(subPages.get(0).title()).isEqualTo("title2"),
                 () -> assertThat(subPages.get(1).id()).isEqualTo(30L),
                 () -> assertThat(subPages.get(1).title()).isEqualTo("title3")
+        );
+    }
+
+    @Sql("/insertBoardTest.sql")
+    @Test
+    @DisplayName("게시글 id 30을 검색하면 자신을 포함하여 계층형 구조의 모든 부모 id를 반환한다.")
+    void findParentIdsByIds() {
+        List<BoardSummary> parentTitlesById = boardRepository.findParentPagesById(30L);
+
+        Assertions.assertAll(
+                () -> assertThat(parentTitlesById.size()).isEqualTo(2),
+                () -> assertThat(parentTitlesById.get(0).id()).isEqualTo(30L),
+                () -> assertThat(parentTitlesById.get(1).id()).isEqualTo(10L),
+                () -> assertThat(parentTitlesById.get(0).title()).isEqualTo("title3"),
+                () -> assertThat(parentTitlesById.get(1).title()).isEqualTo("title1")
         );
     }
 }

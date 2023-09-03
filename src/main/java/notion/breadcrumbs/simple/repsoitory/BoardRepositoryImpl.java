@@ -39,6 +39,21 @@ public class BoardRepositoryImpl implements BoardRepository{
         return jdbcTemplate.query(sql, summaryRowMapper(), id);
     }
 
+    @Override
+    public List<BoardSummary> findParentPagesById(Long id) {
+        String sql = "WITH RECURSIVE breadcrumbs AS (" +
+                "    SELECT id, parent_id, title " +
+                "    FROM boards " +
+                "    WHERE id = ? " +
+                "    UNION ALL " +
+                "    SELECT b.id, b.parent_id, b.title" +
+                "    FROM boards AS b " +
+                "    INNER JOIN breadcrumbs AS c ON b.id = c.parent_id " +
+                ")" +
+                "SELECT id, title FROM breadcrumbs";
+        return jdbcTemplate.query(sql, summaryRowMapper(), id);
+    }
+
 
     private RowMapper<Board> boardRowMapper() {
         return (rs, rowNum) -> Board.builder()
