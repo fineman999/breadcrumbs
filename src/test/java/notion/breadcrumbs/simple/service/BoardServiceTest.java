@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 @Transactional
 @SpringBootTest
 class BoardServiceTest {
@@ -45,7 +47,7 @@ class BoardServiceTest {
     void get()  {
         BoardPage pageInfoById = boardService.findPageInfoById(30L);
 
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(pageInfoById.getId()).isEqualTo(30L),
                 () -> assertThat(pageInfoById.getTitle()).isEqualTo("title3"),
                 () -> assertThat(pageInfoById.getContent()).isEqualTo("content3"),
